@@ -1,55 +1,20 @@
-import unittest
+#!/usr/bin/env python
 
-#from zope.testing import doctestunit
-#from zope.component import testing
-from Testing import ZopeTestCase as ztc
+import unittest2 as unittest
 
-from Products.Five import fiveconfigure
-from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import PloneSite
-ptc.setupPloneSite()
-
-import hmc.config
+from hmc.config.testing import HMC_CONFIG_INTEGRATION_TESTING
 
 
-class TestCase(ptc.PloneTestCase):
+class TestSetup(unittest.TestCase):
 
-    class layer(PloneSite):
+    layer = HMC_CONFIG_INTEGRATION_TESTING
 
-        @classmethod
-        def setUp(cls):
-            fiveconfigure.debug_mode = True
-            ztc.installPackage(hmc.config)
-            fiveconfigure.debug_mode = False
+    def test_portal_title(self):
+        portal = self.layer['portal']
+        self.assertEqual("Human Motion and Control Laboratory",
+                         portal.getProperty('title'))
 
-        @classmethod
-        def tearDown(cls):
-            pass
-
-
-def test_suite():
-    return unittest.TestSuite([
-
-        # Unit tests
-        #doctestunit.DocFileSuite(
-        #    'README.txt', package='hmc.config',
-        #    setUp=testing.setUp, tearDown=testing.tearDown),
-
-        #doctestunit.DocTestSuite(
-        #    module='hmc.config.mymodule',
-        #    setUp=testing.setUp, tearDown=testing.tearDown),
-
-
-        # Integration tests that use PloneTestCase
-        #ztc.ZopeDocFileSuite(
-        #    'README.txt', package='hmc.config',
-        #    test_class=TestCase),
-
-        #ztc.FunctionalDocFileSuite(
-        #    'browser.txt', package='hmc.config',
-        #    test_class=TestCase),
-
-        ])
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    def test_portal_description(self):
+        portal = self.layer['portal']
+        self.assertEqual("Welcome to the Parker Hannifin Human Motion and Control Laboratory at Cleveland State University.",
+                         portal.getProperty('description'))
